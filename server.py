@@ -31,7 +31,7 @@ try:
     experiment_name = 'model_run'
     model = load_model(mlflow_url, experiment_name)
 except:
-    checkpoint_path = './checkpoints/checkpoint.pkl'
+    checkpoint_path = './checkpoints/best_model.pkl'
     model = CaptionNet(n_tokens)
     model.load_state_dict(torch.load(checkpoint_path, map_location=torch.device('cpu'))['best_weights'])	    
 finally:
