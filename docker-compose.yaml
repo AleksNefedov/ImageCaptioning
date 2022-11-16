@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  redis:
+    image: "redis:7.0.0-alpine"
+    container_name: image_captioning.redis
+  
+  mlflow:
+    build: .
+    container_name: image_captioning.mlflow
+    ports:
+      - "6000:6000"
+    volumes:
+      - ./:/project
+    command: ./start_mlflow_server.sh
+  
+  flask:    
+    build: .
+    container_name: image_captioning.application
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/project
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+      - MLFLOW_HOST=mlflow
+      - MLFLOW_PORT=6000
+    depends_on:
+      - celery
+    command: ./start_flask_app.sh
+    
+  celery:
+    build: .
+    container_name: image_captioning.celery    
+    volumes:
+      - ./:/project
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+      - MLFLOW_HOST=mlflow
+      - MLFLOW_PORT=6000
+    command: ./start_celery_worker.sh  
+      
+  jupyter:
+    build: .
+    container_name: image_captioning.jupyter_lab
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./:/project
+    environment:
+      - MLFLOW_HOST=mlflow
+      - MLFLOW_PORT=6000  
+    command: ./start_jupyter_lab.sh   

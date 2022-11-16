@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="margin-bottom: 1em;">Image Captioning with CaptionNet neural network</h2>
+<div>
+    <form id="upload-file" method="post" enctype="multipart/form-data">
+        <label for="imageUpload" class="button">Select an image</label>
+        <input type="file" name="file" id="imageUpload" accept=".jpg, .jpeg, .png">
+    </form>
+    <div class="image-section" style="display:none;">
+        <div class="img-preview">
+            <div id="imagePreview">
+            </div>
+        </div>
+        <div>
+            <button type="button" class="button" id="btn-caption">Caption the image</button>
+        </div>
+    </div>
+    <div class="loader" style="display:none;"></div>    
+    <h5 id="result-text">
+        <span> </span>
+    </h5>
+</div>
+{% endblock %}
